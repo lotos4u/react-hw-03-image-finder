@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {Component} from 'react';
 import './App.css';
 import Searchbar from './components/Searchbar';
 import ImageGallery from "./components/ImageGallery";
@@ -8,58 +8,56 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import {getImages} from "./api/images";
 
 
-const App = () => {
-    const [images, setImages] = useState([]);
-    const [page, setPage] = useState(1);
-    const [query, setQuery] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleSearchImages = (text) => {
-        console.log('before update', query);
-        setPage(0);
-        setQuery(query);
+class App extends Component {
+    state = {
+        images: [],
+        page: 1,
+        query: '',
+        isLoading: false,
     };
 
-    useEffect(() => {
-        loadMore();
-    }, [query])
-
-    useEffect(() => {
-        loadMore();
-    }, [page])
-
-    const loadMore = (callback) => {
-        console.log('query=', query);
-        setIsLoading(true);
-        getImages(query, page).then((newImages) => {
-            setImages([...images, ...newImages]);
-            if (callback) {
-                callback();
-            }
-        }).catch(e => {
-            console.warn(e);
-        }).finally(() => setIsLoading(false));
+    handleSearchImages(text) {
+        this.setState(() => ({ page: 1}), () => this.setState({query: text}, () => this.loadImages(false)));
     };
 
-    const handleLoadMore = () => {
-        setPage(page + 1);
-        loadMore(() => {
-            window.scrollTo({
-                top: document.documentElement.scrollHeight,
-                behavior: 'smooth',
+    loadImages(more, callback) {
+        this.setState({ isLoading: true }, () => {
+            getImages(this.state.query, this.state.page).then((newImages) => {
+                this.setState(() => {
+                    return more ? { images: [...this.state.images, ...newImages] } : {images: [...newImages]};
+                }, () => {
+                    if (callback) {
+                        callback();
+                    }
+                });
+            }).catch(e => {
+                console.warn(e);
+            }).finally(() => this.setState({ isLoading: false }));
+        });
+    };
+
+    handleLoadMore() {
+        this.setState(() => ({ page: this.state.page + 1 }), () => {
+            this.loadImages(true, () => {
+                window.scrollTo({
+                    top: document.documentElement.scrollHeight,
+                    behavior: 'smooth',
+                });
             });
         });
     }
-    return <div className="App">
-        <Searchbar onSubmit={handleSearchImages}/>
-        {isLoading ? <GalleryLoader/> : (
-            <>
-                <ImageGallery images={images}/>
-                {images.length > 0 ? <Button onClick={handleLoadMore}/> : ''}
-            </>
-        )}
 
-    </div>
+    render() {
+        return <div className="App">
+            <Searchbar onSubmit={(data) => this.handleSearchImages(data)}/>
+            {this.state.isLoading ? <GalleryLoader/> : (
+                <>
+                    <ImageGallery images={this.state.images}/>
+                    {this.state.images.length > 0 ? <Button onClick={() => this.handleLoadMore()}/> : ''}
+                </>
+            )}
+        </div>
+    }
 }
 
 export default App;
