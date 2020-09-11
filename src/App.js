@@ -64,8 +64,22 @@ class App extends Component {
         this.setState({ showFull: (image ? image.largeImageURL : null) });
     }
 
-    handleModalClose = () => {
+    handleCloseModal = () => {
         this.setState({ showFull: null });
+    }
+
+    handleCloseModalEsc = (e) => {
+        if (e.code === 'Escape') {
+            this.handleCloseModal();
+        }
+    };
+
+    componentDidMount() {
+        window.addEventListener('keydown', this.handleCloseModalEsc);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.handleCloseModalEsc);
     }
 
     render() {
@@ -79,7 +93,7 @@ class App extends Component {
                     </> : ''}
                 </>
             )}
-            {this.state.showFull ? <Modal image={this.state.showFull} onClose={() => this.handleModalClose()}/> : ''}
+            {this.state.showFull ? <Modal image={this.state.showFull} onClose={() => this.handleCloseModal()}/> : ''}
         </div>
     }
 }
