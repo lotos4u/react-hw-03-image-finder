@@ -5,7 +5,7 @@ const Button = (props) => {
         e.preventDefault();
         props.onClick();
     };
-    return <button onClick={(e) => handleOnClick(e)}>Load more</button>
+    return <button className='Button' onClick={(e) => handleOnClick(e)}>Load more</button>
 }
 
 export default Button;

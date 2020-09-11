@@ -1,12 +1,14 @@
-import React, {Component} from 'react';
+import React from 'react';
 import ImageGalleryItem from "../ImageGalleryItem";
 
-class ImageGallery extends Component {
-    render() {
-        return <ul className="ImageGallery">
-            {this.props.images.map(i => <ImageGalleryItem key={i.id} image={i}/>)}
-        </ul>
+const ImageGallery = (props) => {
+    const handleImageClick = (data) => {
+        props.onClick(data);
     }
+
+    return <ul className="ImageGallery">
+        {props.images.map(i => <ImageGalleryItem key={i.id} image={i} onClick={handleImageClick}/>)}
+    </ul>
 }
 
 export default ImageGallery;

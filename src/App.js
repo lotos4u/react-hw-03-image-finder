@@ -6,6 +6,7 @@ import GalleryLoader from "./components/Loader";
 import Button from "./components/Button";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import {getImages} from "./api/images";
+import Modal from "./components/Modal";
 
 
 class App extends Component {
@@ -14,17 +15,33 @@ class App extends Component {
         page: 1,
         query: '',
         isLoading: false,
+        showFull: null,
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (snapshot) {
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.documentElement.scrollHeight,
+                    behavior: 'smooth',
+                });
+            }, 0);
+        }
+    }
+
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        return this.state.images.length > prevState.images.length;
+    }
+
     handleSearchImages(text) {
-        this.setState(() => ({ page: 1}), () => this.setState({query: text}, () => this.loadImages(false)));
+        this.setState(() => ({page: 1}), () => this.setState({query: text}, () => this.loadImages(false)));
     };
 
     loadImages(more, callback) {
-        this.setState({ isLoading: true }, () => {
+        this.setState({isLoading: true}, () => {
             getImages(this.state.query, this.state.page).then((newImages) => {
                 this.setState(() => {
-                    return more ? { images: [...this.state.images, ...newImages] } : {images: [...newImages]};
+                    return more ? {images: [...this.state.images, ...newImages]} : {images: [...newImages]};
                 }, () => {
                     if (callback) {
                         callback();
@@ -32,19 +49,23 @@ class App extends Component {
                 });
             }).catch(e => {
                 console.warn(e);
-            }).finally(() => this.setState({ isLoading: false }));
+            }).finally(() => this.setState({isLoading: false}));
         });
     };
 
     handleLoadMore() {
-        this.setState(() => ({ page: this.state.page + 1 }), () => {
-            this.loadImages(true, () => {
-                window.scrollTo({
-                    top: document.documentElement.scrollHeight,
-                    behavior: 'smooth',
-                });
-            });
+        this.setState(() => ({page: this.state.page + 1}), () => {
+            this.loadImages(true);
         });
+    }
+
+    handleImageClick = (id) => {
+        const image = this.state.images.find(i => i.id === id);
+        this.setState({ showFull: (image ? image.largeImageURL : null) });
+    }
+
+    handleModalClose = () => {
+        this.setState({ showFull: null });
     }
 
     render() {
@@ -52,10 +73,13 @@ class App extends Component {
             <Searchbar onSubmit={(data) => this.handleSearchImages(data)}/>
             {this.state.isLoading ? <GalleryLoader/> : (
                 <>
-                    <ImageGallery images={this.state.images}/>
-                    {this.state.images.length > 0 ? <Button onClick={() => this.handleLoadMore()}/> : ''}
+                    {this.state.query ? <>
+                        <ImageGallery images={this.state.images} onClick={(id) => this.handleImageClick(id)}/>
+                        {this.state.images.length > 0 ? <Button onClick={() => this.handleLoadMore()}/> : ''}
+                    </> : ''}
                 </>
             )}
+            {this.state.showFull ? <Modal image={this.state.showFull} onClose={() => this.handleModalClose()}/> : ''}
         </div>
     }
 }

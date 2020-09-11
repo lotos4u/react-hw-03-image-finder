@@ -1,13 +1,17 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-class ImageGalleryItem extends Component {
-    render() {
-        return <li className="ImageGalleryItem">
-            <img src={this.props.image.previewURL}
-                 alt={this.props.image.previewURL}
-                 className="ImageGalleryItem-image"/>
-        </li>
+const ImageGalleryItem = (props) => {
+    const handleClick = (e) => {
+        e.preventDefault();
+        props.onClick(props.image.id);
     }
+
+    return <li className="ImageGalleryItem">
+        <img onClick={(e) => handleClick(e)}
+             src={props.image.webformatURL}
+             alt={props.image.webformatURL}
+             className="ImageGalleryItem-image"/>
+    </li>
 }
 
 export default ImageGalleryItem;

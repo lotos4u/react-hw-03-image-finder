@@ -1,14 +1,18 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-class Modal extends Component {
-    render() {
-        console.log(this.props.image);
-        return <div className="Overlay">
-            <div className="Modal">
-                <img src="" alt="" />
-            </div>
-        </div>
+const Modal = (props) => {
+    const handleClick = (e) => {
+        e.preventDefault();
+        if (e.target instanceof HTMLDivElement) {
+            props.onClose(props.image.id);
+        }
     }
+
+    return <div className='Overlay' onClick={handleClick}>
+        <div className='Modal'>
+            <img src={props.image} alt={props.image}/>
+        </div>
+    </div>
 }
 
 export default Modal;
