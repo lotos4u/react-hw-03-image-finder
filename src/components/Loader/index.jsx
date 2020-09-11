@@ -2,13 +2,15 @@ import React from 'react';
 import Loader from 'react-loader-spinner'
 
 const GalleryLoader = () => (
-    <Loader
-        type="Puff"
-        color="#00BFFF"
-        height={100}
-        width={100}
-        timeout={3000} //3 secs
-    />
+    <div className='Loader'>
+        <Loader
+            type="ThreeDots"
+            color="#3f51b5"
+            height={100}
+            width={100}
+            timeout={0}
+        />
+    </div>
 );
 
 export default GalleryLoader;

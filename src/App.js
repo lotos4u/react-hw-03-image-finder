@@ -85,14 +85,11 @@ class App extends Component {
     render() {
         return <div className="App">
             <Searchbar onSubmit={(data) => this.handleSearchImages(data)}/>
-            {this.state.isLoading ? <GalleryLoader/> : (
-                <>
-                    {this.state.query ? <>
-                        <ImageGallery images={this.state.images} onClick={(id) => this.handleImageClick(id)}/>
-                        {this.state.images.length > 0 ? <Button onClick={() => this.handleLoadMore()}/> : ''}
-                    </> : ''}
-                </>
-            )}
+            {this.state.query ? <>
+                <ImageGallery images={this.state.images} onClick={(id) => this.handleImageClick(id)}/>
+                {this.state.images.length > 0  && !this.state.isLoading ? <Button onClick={() => this.handleLoadMore()}/> : ''}
+            </> : ''}
+            {this.state.isLoading ? <GalleryLoader/> : ''}
             {this.state.showFull ? <Modal image={this.state.showFull} onClose={() => this.handleCloseModal()}/> : ''}
         </div>
     }
