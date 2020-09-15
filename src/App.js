@@ -68,20 +68,6 @@ class App extends Component {
         this.setState({ showFull: null });
     }
 
-    handleCloseModalEsc = (e) => {
-        if (e.code === 'Escape') {
-            this.handleCloseModal();
-        }
-    };
-
-    componentDidMount() {
-        window.addEventListener('keydown', this.handleCloseModalEsc);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.handleCloseModalEsc);
-    }
-
     render() {
         return <div className="App">
             <Searchbar onSubmit={(data) => this.handleSearchImages(data)}/>
