@@ -74,9 +74,9 @@ class App extends Component {
             {this.state.query ? <>
                 <ImageGallery images={this.state.images} onClick={(id) => this.handleImageClick(id)}/>
                 {this.state.images.length > 0  && !this.state.isLoading ? <Button onClick={() => this.handleLoadMore()}/> : ''}
-            </> : ''}
-            {this.state.isLoading ? <GalleryLoader/> : ''}
-            {this.state.showFull ? <Modal image={this.state.showFull} onClose={() => this.handleCloseModal()}/> : ''}
+            </> : null}
+            {this.state.isLoading ? <GalleryLoader/> : null}
+            {this.state.showFull ? <Modal image={this.state.showFull} onClose={() => this.handleCloseModal()}/> : null}
         </div>
     }
 }
