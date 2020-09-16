@@ -8,7 +8,6 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import {getImages} from "./api/images";
 import Modal from "./components/Modal";
 
-
 class App extends Component {
     state = {
         images: [],
@@ -33,7 +32,7 @@ class App extends Component {
         return this.state.images.length > prevState.images.length;
     }
 
-    handleSearchImages(text) {
+    handleSearchImages = (text) => {
         this.setState(() => ({page: 1}), () => this.setState({query: text}, () => this.loadImages(false)));
     };
 
@@ -53,7 +52,7 @@ class App extends Component {
         });
     };
 
-    handleLoadMore() {
+    handleLoadMore = () => {
         this.setState(() => ({page: this.state.page + 1}), () => {
             this.loadImages(true);
         });
@@ -70,13 +69,13 @@ class App extends Component {
 
     render() {
         return <div className="App">
-            <Searchbar onSubmit={(data) => this.handleSearchImages(data)}/>
-            {this.state.query ? <>
-                <ImageGallery images={this.state.images} onClick={(id) => this.handleImageClick(id)}/>
-                {this.state.images.length > 0  && !this.state.isLoading ? <Button onClick={() => this.handleLoadMore()}/> : ''}
-            </> : null}
-            {this.state.isLoading ? <GalleryLoader/> : null}
-            {this.state.showFull ? <Modal image={this.state.showFull} onClose={() => this.handleCloseModal()}/> : null}
+            <Searchbar onSubmit={this.handleSearchImages}/>
+            {this.state.query && <>
+                <ImageGallery images={this.state.images} onClick={this.handleImageClick}/>
+                {this.state.images.length > 0  && !this.state.isLoading && <Button onClick={this.handleLoadMore}/>}
+            </>}
+            {this.state.isLoading && <GalleryLoader/>}
+            {this.state.showFull && <Modal image={this.state.showFull} onClose={this.handleCloseModal}/>}
         </div>
     }
 }
